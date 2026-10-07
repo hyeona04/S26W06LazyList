@@ -26,6 +26,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kr.ac.kumoh.ce.s20230346.s26w06lazylist.model.Song
 import kr.ac.kumoh.ce.s20230346.s26w06lazylist.viewmodel.SongViewModel
 import androidx.compose.foundation.lazy.items
+import android.content.res.Configuration
+import androidx.compose.ui.platform.LocalConfiguration
+
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 
 class MainActivity : ComponentActivity() {
     private val songViewModel: SongViewModel by viewModels()
@@ -50,14 +56,36 @@ fun MainScreen(viewModel: SongViewModel) {
     }
 }
 @Composable
-fun MyList(modifier: Modifier = Modifier, songs: List<Song>,) {
-    LazyColumn(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(horizontal = 8.dp)
-    ) {
-        items(songs) { song ->
-            SongItem(song)
+fun MyList(
+    modifier: Modifier = Modifier,
+    songs: List<Song>,
+) {
+    val configuration = LocalConfiguration.current
+    val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+
+    if (isPortrait) {
+        LazyColumn(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 8.dp)
+        ) {
+            items(songs) { song ->
+                SongItem(song)
+            }
+        }
+
+    }
+    else {
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Fixed(2),
+            modifier = modifier,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalItemSpacing = 8.dp,
+            contentPadding = PaddingValues(horizontal = 8.dp)
+        ) {
+            items(songs) { song ->
+                SongItem(song)
+            }
         }
     }
 }
@@ -78,7 +106,8 @@ fun SongItem(song: Song) {
 
 @Composable
 fun TextTitle(title: String) {
-    Text(title, fontSize = 30.sp)
+    Text(title, fontSize = 30.sp, lineHeight = 40.sp, )
+
 }
 
 @Composable
